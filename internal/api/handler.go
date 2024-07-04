@@ -14,9 +14,9 @@ type Handler struct {
 	urlService *shortURL.URLService
 }
 
-func NewHandler() *http.ServeMux {
+func NewHandler(finder shortURL.Finder, saver shortURL.Saver) *http.ServeMux {
 	handler := &Handler{
-		urlService: shortURL.NewURLService(),
+		urlService: shortURL.NewURLService(finder, saver),
 	}
 
 	mux := http.NewServeMux()

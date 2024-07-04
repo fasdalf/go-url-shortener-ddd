@@ -8,19 +8,33 @@ import (
 )
 
 type URLService struct {
+	finder Finder
+	saver  Saver
 }
 
-func NewURLService() *URLService {
-	return &URLService{}
+type Finder interface {
+	Find(id string) (*domain.URL, error)
+}
+type Saver interface {
+	Save(url *domain.URL) error
+}
+
+func NewURLService(finder Finder, saver Saver) *URLService {
+	return &URLService{
+		finder: finder,
+		saver:  saver,
+	}
 }
 
 func (h *URLService) Shorten(original string) (*domain.URL, error) {
 	hash := sha1.New()
 	hash.Write([]byte(original))
 	short := hex.EncodeToString(hash.Sum(nil))[:8]
-	return domain.NewURL(short, original), nil
+	url := domain.NewURL(short, original)
+	err := h.saver.Save(url)
+	return url, err
 }
 
 func (h *URLService) Find(id string) (*domain.URL, error) {
-	return nil, nil
+	return h.finder.Find(id)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/vokinneberg/go-url-shortener-ddd/internal/repository"
 	"log"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func main() {
-	httpHandler := api.NewHandler()
+	rep := repository.NewMemRepository()
+	httpHandler := api.NewHandler(rep, rep)
 	log.Fatal(http.ListenAndServe(":8080", httpHandler))
 }
